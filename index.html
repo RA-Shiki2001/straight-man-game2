@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>靈魂互換：直男生存記</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei",
+      "Noto Sans TC", "Segoe UI", Roboto, sans-serif;
+    background: #f5f4f2;
+    color: #1c1917;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Top nav */
+  .topnav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 24px;
+  }
+  .topnav-items {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #a8a29e;
+  }
+  .topnav-active { color: #1c1917; font-weight: 500; }
+  .sound-btn {
+    background: none; border: none; cursor: pointer;
+    color: #a8a29e; font-size: 16px; padding: 4px;
+  }
+  .sound-btn:hover { color: #44403c; }
+
+  /* Hero */
+  main { padding-top: 40px; padding-bottom: 16px; }
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .hero-subtitle {
+    font-size: 14px;
+    color: #a8a29e;
+    margin-top: 12px;
+  }
+
+  /* Game frame: 用來把整個遊戲互動區跟上方標題明確分隔開 */
+  .game-frame {
+    border-top: 2px solid #d6d3d1;
+    border-bottom: 2px solid #d6d3d1;
+    padding: 28px 0;
+    margin-top: 28px;
+  }
+
+  /* Generic section spacing */
+  .section { margin-top: 32px; }
+  .game-frame > .section:first-child { margin-top: 0; }
+
+  .intro-text {
+    font-size: 14px;
+    color: #57534e;
+    line-height: 1.75;
+  }
+
+  .preview-label {
+    text-align: center;
+    font-size: 12px;
+    color: #a8a29e;
+    margin-bottom: 16px;
+  }
+
+  /* Chat bubbles (shared) */
+  .bubble-row { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; }
+  .bubble-row.right { justify-content: flex-end; }
+  .bubble {
+    background: #fff;
+    border: 1px solid #e7e5e4;
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    padding: 12px 16px;
+    max-width: 280px;
+    font-size: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    white-space: pre-line;
+    line-height: 1.5;
+  }
+  .bubble.sent {
+    background: #1c1917;
+    color: #fff;
+    border: none;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 18px;
+  }
+  .bubble.faint {
+    background: #fafaf9;
+    color: #a8a29e;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 18px;
+  }
+  .bubble.twist {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+  }
+  .bubble.timeout {
+    background: #d6d3d1;
+    color: #57534e;
+    font-style: italic;
+  }
+
+  /* Start card */
+  .start-card {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid #e7e5e4;
+    border-radius: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: border-color .2s;
+    text-align: left;
+  }
+  .start-card:hover { border-color: #a8a29e; }
+  .start-card-title { font-weight: 600; margin: 0; }
+  .start-card-sub { font-size: 12px; color: #a8a29e; margin: 4px 0 0; }
+  .start-icon {
+    width: 36px; height: 36px; border-radius: 999px;
+    background: #1c1917; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 16px;
+  }
+
+  /* Transition screen */
+  .transition-card {
+    background: #1c1917;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+  }
+  .transition-label {
+    color: #a8a29e; font-size: 12px;
+    text-transform: uppercase; letter-spacing: .12em;
+  }
+  .avatar-circle {
+    width: 80px; height: 80px; margin: 24px auto;
+    border-radius: 999px; background: #292524;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+  }
+  .transition-name { color: #fff; font-size: 24px; font-weight: 700; margin: 0; }
+  .transition-sub { color: #a8a29e; font-size: 14px; margin: 4px 0 0; }
+  .btn-white {
+    width: 100%; background: #fff; color: #1c1917;
+    padding: 12px; border-radius: 12px; font-weight: 600;
+    border: none; cursor: pointer; margin-top: 24px; font-size: 14px;
+  }
+  .btn-white:hover { background: #e7e5e4; }
+
+  /* Warning screen */
+  .warning-card {
+    border-radius: 16px; padding: 32px; text-align: center; border: 1px solid;
+  }
+  .warning-card.mid { background: #fffbeb; border-color: #fde68a; }
+  .warning-card.high { background: #fef2f2; border-color: #fecaca; }
+  .warning-title-row {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .warning-title { font-size: 14px; font-weight: 600; margin: 0; }
+  .warning-title.mid { color: #b45309; }
+  .warning-title.high { color: #dc2626; }
+  .warning-msg-list {
+    text-align: left; max-width: 280px; margin: 20px auto 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .warning-msg {
+    background: #fff; border: 1px solid #e7e5e4;
+    border-radius: 12px; padding: 8px 16px; font-size: 14px;
+  }
+  .warning-msg-name { color: #a8a29e; margin-right: 4px; }
+  .warning-note { font-size: 12px; color: #78716c; margin-top: 20px; }
+  .btn-warning {
+    width: 100%; padding: 12px; border-radius: 12px;
+    font-weight: 600; color: #fff; border: none; cursor: pointer;
+    margin-top: 20px; font-size: 14px;
+  }
+  .btn-warning.mid { background: #d97706; }
+  .btn-warning.mid:hover { background: #b45309; }
+  .btn-warning.high { background: #ef4444; }
+  .btn-warning.high:hover { background: #dc2626; }
+
+  /* Chat screen */
+  .chat-header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: #a8a29e;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e7e5e4;
+    margin-bottom: 16px;
+  }
+  .chat-friend-name { font-weight: 500; }
+
+  .timer-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: #a8a29e; margin-bottom: 4px;
+  }
+  .timer-value.danger { color: #ef4444; font-weight: 600; }
+  .timer-track {
+    width: 100%; height: 6px; background: #e7e5e4;
+    border-radius: 999px; overflow: hidden;
+  }
+  .timer-fill { height: 100%; transition: width 1s linear; }
+
+  .thought-text {
+    text-align: center; font-size: 12px; color: #a8a29e;
+    font-style: italic; padding: 0 16px;
+  }
+
+  .choice-btn {
+    background: #fafaf9; border: 1px solid #e7e5e4;
+    color: #292524; border-radius: 18px; border-bottom-right-radius: 4px;
+    padding: 12px 16px; max-width: 280px; font-size: 14px;
+    text-align: left; cursor: pointer; transition: background .15s, border-color .15s;
+    white-space: pre-line; line-height: 1.5;
+  }
+  .choice-btn:hover { background: #f0efed; border-color: #d6d3d1; }
+
+  .confirm-row {
+    display: flex; justify-content: flex-end;
+    padding-top: 16px;
+    margin-top: 8px;
+    border-top: 1px solid #e7e5e4;
+  }
+  .confirm-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #1c1917; color: #fff; font-size: 14px; font-weight: 500;
+    padding: 10px 20px; border-radius: 999px; border: none; cursor: pointer;
+  }
+  .confirm-btn:hover { background: #292524; }
+
+  .twist-note {
+    text-align: center; font-size: 12px; color: #a8a29e; font-style: italic;
+  }
+
+  /* Ending screen */
+  .ending-hero { text-align: center; padding: 24px 0; }
+  .ending-emoji { font-size: 48px; margin-bottom: 12px; }
+  .ending-title { font-size: 24px; font-weight: 700; margin: 0; }
+  .ending-desc {
+    font-size: 14px; color: #57534e; line-height: 1.7;
+    text-align: center; padding: 0 16px;
+  }
+  .stat-card {
+    background: #fff; border: 1px solid #e7e5e4;
+    border-radius: 16px; padding: 20px;
+  }
+  .stat-row {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #a8a29e; margin-bottom: 8px;
+  }
+  .stat-track {
+    width: 100%; height: 6px; background: #f0efed;
+    border-radius: 999px; overflow: hidden;
+  }
+  .stat-fill { height: 100%; background: #1c1917; }
+  .restart-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: #1c1917; color: #fff; padding: 12px; border-radius: 12px;
+    font-weight: 600; border: none; cursor: pointer; font-size: 14px;
+  }
+  .restart-btn:hover { background: #292524; }
+
+  /* FAQ */
+  .faq-section { padding-top: 64px; padding-bottom: 24px; }
+  .faq-label { font-size: 12px; color: #a8a29e; margin-bottom: 16px; }
+  .faq-list { border-top: 1px solid #e7e5e4; }
+  .faq-item { padding: 16px 0; border-bottom: 1px solid #e7e5e4; }
+  .faq-q { font-weight: 500; font-size: 14px; margin: 0 0 4px; }
+  .faq-a { font-size: 12px; color: #78716c; line-height: 1.6; margin: 0; }
+
+  .disclaimer { font-size: 12px; color: #a8a29e; padding: 0 24px; max-width: 600px; margin: 0 auto; }
+
+  footer {
+    max-width: 600px; margin: 24px auto 0; padding: 32px 24px;
+    border-top: 1px solid #e7e5e4; display: flex; gap: 16px;
+    font-size: 12px; color: #a8a29e;
+  }
+
+  /* Utility flex helpers used inline */
+  .flex-col { display: flex; flex-direction: column; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+
+const { useState, useEffect, useRef } = React;
+
+/* ---------------------------------------------------
+   題庫（40 題）
+--------------------------------------------------- */
+const allRounds = [
+  {
+    friend: "阿明", avatar: "😎", color: "#2563eb",
+    thought: "（我到底是誰？為什麼在一個充滿汗臭味的房間醒來……）",
+    messages: ["欸你醒了沒", "再不回我就要叫你媽了"],
+    choices: [
+      { text: "醒了啦 幹嘛", delta: 0, reaction: "屁啦 是有多急 中午一起吃飯" },
+      { text: "幹 我還活著", delta: 5, reaction: "哈哈 廢話 我開玩笑的啦" },
+      { text: "早安，今天也要加油喔", delta: 30, reaction: "……你今天講話怎麼那麼陽光 是不是走錯群組" },
+    ],
+  },
+  {
+    friend: "阿彪", avatar: "🐻", color: "#4f46e5",
+    thought: "（他劈頭就罵我「廢物」？這是暗號還是真的生氣？）",
+    messages: ["欸廢物", "晚上吃飯嗎"],
+    choices: [
+      { text: "吃啊 你請客？", delta: 5, reaction: "誰要請你 自己出錢啦" },
+      { text: "幹你才廢物 幾點", delta: 0, reaction: "六點 老地方 別遲到" },
+      { text: "請不要用這種詞稱呼我", delta: 40, reaction: "……你今天是怎樣 我們平常都這樣講話好嗎" },
+    ],
+  },
+  {
+    friend: "阿賢", avatar: "💪", color: "#ea580c",
+    thought: "（深蹲又加重量？這身體撐得住嗎……）",
+    messages: ["今天練腿嗎", "我昨天深蹲又加5公斤"],
+    choices: [
+      { text: "你先不要死在健身房", delta: 5, reaction: "哈哈 不會啦 我很穩" },
+      { text: "好啊 幾點", delta: 0, reaction: "七點 記得吃飽再來" },
+      { text: "太棒了！恭喜你突破自己的極限！", delta: 35, reaction: "……你今天講話怎麼那麼像教練 很怪" },
+    ],
+  },
+  {
+    friend: "阿凱", avatar: "🎮", color: "#9333ea",
+    thought: "（打電動？我連手把怎麼拿都要想一下……）",
+    messages: ["晚上缺一個", "你來不來"],
+    choices: [
+      { text: "來啊", delta: 0, reaction: "好 我先開房間等你" },
+      { text: "看你們缺不缺我這個高手", delta: 5, reaction: "屁啦 上次不是被我電爆" },
+      { text: "我今天想把時間留給閱讀", delta: 40, reaction: "……閱讀？？你認真？兄弟你今天真的很怪" },
+    ],
+  },
+  {
+    friend: "阿豪", avatar: "💸", color: "#059669",
+    thought: "（他說我欠他500？完全沒印象……）",
+    messages: ["欸我上次借你500你還沒還欸"],
+    choices: [
+      { text: "幹我忘了 等下轉", delta: 0, reaction: "好啦 記得就好" },
+      { text: "謝謝你的提醒，我會盡快處理", delta: 35, reaction: "……你今天講話怎麼像客服 很怪欸" },
+      { text: "可以啊 明天還你", delta: 8, reaction: "喔 好 那我等明天" },
+    ],
+  },
+  {
+    friend: "學長阿龍", avatar: "🍺", color: "#dc2626",
+    thought: "（學長找我當免費勞工？先接了再說。）",
+    messages: ["禮拜五聚會你來嗎", "缺你這個免費勞工"],
+    choices: [
+      { text: "來啊 幾點開始", delta: 0, reaction: "七點 記得早點到幫忙搬東西" },
+      { text: "學長這麼看得起我喔", delta: 5, reaction: "哈哈 少廢話 準時來就好" },
+      { text: "感謝您的邀請，我會準時出席", delta: 35, reaction: "……你今天是不是被什麼附身 講話那麼正式" },
+    ],
+  },
+  {
+    friend: "兄弟群組", avatar: "🤙", color: "#d97706",
+    thought: "（這什麼爛迷因……但直男的反應到底是狂笑還是吐槽？）",
+    messages: ["[一張超爛迷因]", "笑死這三小"],
+    choices: [
+      { text: "幹這什麼鬼", delta: 0, reaction: "哈哈哈對吧 有夠瞎" },
+      { text: "哈哈哈哈哈哈哈哈哈", delta: 5, reaction: "笑屁 你到底看了沒" },
+      { text: "我覺得這個迷因可能有點冒犯", delta: 35, reaction: "……你今天是聖人上身喔" },
+    ],
+  },
+  {
+    friend: "阿明", avatar: "😎", color: "#2563eb",
+    thought: "（他開始懷疑了，先用氣勢壓過去。）",
+    messages: ["認真問", "你今天是不是怪怪的"],
+    choices: [
+      { text: "哪裡怪？你才怪吧", delta: 0, reaction: "……好啦好啦 算我多想 走 打球去" },
+      { text: "有嗎哈哈", delta: 8, reaction: "喔 好吧 可能我看錯" },
+      { text: "其實我有件事情一直瞞著你", delta: 45, reaction: "……啊？？？你現在是要跟我說什麼" },
+    ],
+  },
+  {
+    friend: "阿泰", avatar: "🎉", color: "#db2777",
+    thought: "（他大罵髒話？聽起來不是生氣，是狂喜……）",
+    messages: ["幹你娘咧！！", "我三抽出SSR！！"],
+    choices: [
+      { text: "靠北真的假的", delta: 5, reaction: "真的啦 我截圖給你看" },
+      { text: "恭喜你獲得珍貴的SSR，真替你開心", delta: 35, reaction: "……你今天講話怎麼那麼客氣 很怪" },
+      { text: "幹你娘你也太爽", delta: 0, reaction: "對吧！！歐皇附體 哈哈哈" },
+    ],
+  },
+  {
+    friend: "阿弟仔", avatar: "🐷", color: "#a16207",
+    thought: "（死肥宅？聽起來是稱讚，但也可能是純粹嘲笑……先試探看看。）",
+    messages: ["幹你這死肥宅", "居然真的把妹追到了"],
+    choices: [
+      { text: "肥宅也是有春天的", delta: 5, reaction: "哈哈哈 也是啦 佩服" },
+      { text: "謝謝你的肯定", delta: 35, reaction: "……你今天是怎樣 講話那麼正經" },
+      { text: "幹你才肥宅", delta: 0, reaction: "靠北 反嗆喔 哈哈哈 厲害" },
+    ],
+  },
+  {
+    friend: "阿凱", avatar: "🎮", color: "#9333ea",
+    thought: "（他虧我弱雞？電競文化的標準流程應該是嘴回去。）",
+    messages: ["哈哈哈被我打爆", "弱雞"],
+    choices: [
+      { text: "幹下一場你死定了", delta: 0, reaction: "來啊 看你有沒有那個實力" },
+      { text: "好啦你厲害", delta: 8, reaction: "喔 你今天怎麼那麼服氣 不嘴我了" },
+      { text: "我真的有點難過", delta: 40, reaction: "……你認真？平常你被電都嘴我 今天是怎樣" },
+    ],
+  },
+  {
+    friend: "鄉下朋友阿祿", avatar: "🌾", color: "#4d7c0f",
+    thought: "（北七？聽起來像在笑我，但他好像很興奮要傳影片給我……）",
+    messages: ["北七", "你被自己家的狗絆倒欸", "我錄到了"],
+    choices: [
+      { text: "幹刪掉啦", delta: 5, reaction: "才不要 這個要留念" },
+      { text: "笑死 傳我", delta: 0, reaction: "來 傳給你 你自己看有多好笑" },
+      { text: "請你刪除影片，這侵犯我的隱私權", delta: 40, reaction: "……你今天講話怎麼那麼像律師 很怪" },
+    ],
+  },
+  {
+    friend: "阿翔", avatar: "👕", color: "#0891b2",
+    thought: "（他稱讚我穿搭？直男收到稱讚要裝低調才對。）",
+    messages: ["你今天穿這樣很殺欸", "要去把妹喔"],
+    choices: [
+      { text: "哪有 隨便穿", delta: 0, reaction: "少來 你明明就有精心打扮" },
+      { text: "有眼光喔", delta: 5, reaction: "哈哈 算你識貨" },
+      { text: "謝謝，我今天確實特別搭配過", delta: 30, reaction: "……你今天講話怎麼那麼優雅 是不是要選美" },
+    ],
+  },
+  {
+    friend: "阿彪", avatar: "🐻", color: "#4f46e5",
+    thought: "（等等，這次不一樣，他語氣真的很低落……）",
+    messages: ["欸靠北", "我阿嬤昨天走了"],
+    choices: [
+      { text: "……幹\n你還好嗎", delta: 5, reaction: "……嗯 謝謝你" },
+      { text: "又在演喔 廢物", delta: 45, reaction: "……我是認真的 你今天很機掰欸" },
+      { text: "節哀，有需要我過去嗎", delta: 0, reaction: "謝了兄弟 真的謝謝你" },
+    ],
+  },
+  {
+    friend: "老闆", avatar: "👔", color: "#57534e",
+    thought: "（老闆突然要我加班？先簡短回應就好。）",
+    messages: ["明天要交案", "今晚留下來一下"],
+    choices: [
+      { text: "好", delta: 0, reaction: "好 辛苦了" },
+      { text: "好的主管，我會全力配合公司安排", delta: 35, reaction: "……你今天講話怎麼那麼制式 平常不是這樣" },
+      { text: "好啦幹", delta: 5, reaction: "哈哈 辛苦你了 加油" },
+    ],
+  },
+  {
+    friend: "學長阿龍", avatar: "🍺", color: "#dc2626",
+    thought: "（他失戀了，直男安慰法則：不要講大道理，約出去就對了。）",
+    messages: ["我跟她分了", "幹 心情超差"],
+    choices: [
+      { text: "走 喝酒", delta: 0, reaction: "……好兄弟 就是要這樣" },
+      { text: "你還好嗎？需要我陪你聊聊嗎？", delta: 8, reaction: "……謝了 但先不用 我想自己靜一靜" },
+      { text: "下一個更好", delta: 25, reaction: "……現在講這個有點太快了吧" },
+    ],
+  },
+  {
+    friend: "阿凱", avatar: "🚗", color: "#9333ea",
+    thought: "（出遊要不要開車？先看情況再決定。）",
+    messages: ["六日要出去", "你開車嗎？"],
+    choices: [
+      { text: "我開啊", delta: 0, reaction: "好 那就這樣說定了" },
+      { text: "都可以 看你們", delta: 5, reaction: "喔 好 那我來排" },
+      { text: "可以，大家安全最重要", delta: 30, reaction: "……你今天講話怎麼像在唸交通安全宣導" },
+    ],
+  },
+  {
+    friend: "阿虎", avatar: "🏀", color: "#e11d48",
+    thought: "（他在炫耀球技？直男標準做法是酸一下。）",
+    messages: ["看我這球", "這就是實力"],
+    choices: [
+      { text: "運氣啦", delta: 0, reaction: "屁 這叫實力好嗎" },
+      { text: "幹你是不是作弊", delta: 5, reaction: "哪有作弊 純實力啦" },
+      { text: "真的很厲害，值得我學習", delta: 30, reaction: "……你今天很少這麼捧我 是不是有事求我" },
+    ],
+  },
+  {
+    friend: "兄弟群組", avatar: "💑", color: "#d97706",
+    thought: "（有人曬女友照，標準流程是酸一下不是真心稱讚。）",
+    messages: ["我女友是不是超正"],
+    choices: [
+      { text: "濾鏡開到月球去了", delta: 0, reaction: "幹你才濾鏡 我女友素顏都比你正" },
+      { text: "正啦正啦", delta: 5, reaction: "喔 敷衍喔 哈哈" },
+      { text: "蠻漂亮的，祝你們幸福", delta: 30, reaction: "……你今天怎麼那麼真心 平常都酸我" },
+    ],
+  },
+  {
+    friend: "阿明", avatar: "😎", color: "#2563eb",
+    thought: "（最終質疑來了，這次要用最直男的方式打死不認。）",
+    messages: ["你老實跟我講", "你到底是不是本人"],
+    choices: [
+      { text: "幹不然我是鬼喔", delta: 0, reaction: "……好啦好啦 算我沒說 走 打球去" },
+      { text: "其實你說得對", delta: 45, reaction: "……啊？？？你現在是在跟我開什麼玩笑" },
+      { text: "你今天是不是喝醉", delta: 5, reaction: "哈哈 也是啦 早說嘛" },
+    ],
+  },
+  {
+    friend: "阿凱", avatar: "😔", color: "#9333ea",
+    thought: "（等等，這語氣不太對……他好像是真的難過。）",
+    messages: ["我今天被公司開掉了", "幹"],
+    choices: [
+      { text: "幹……走，吃飯我請", delta: 0, reaction: "謝了兄弟 真的謝謝" },
+      { text: "哈哈哈你終於被抓到了", delta: 45, reaction: "……我是認真的 你今天講話很機掰" },
+      { text: "為什麼？還好嗎？", delta: 5, reaction: "……唉 別問了 先吃飯吧" },
+    ],
+  },
+  {
+    friend: "學長阿龍", avatar: "🏥", color: "#dc2626",
+    thought: "（住院？聽起來不像在開玩笑……）",
+    messages: ["我摔車", "現在醫院"],
+    choices: [
+      { text: "哪間？我過去", delta: 0, reaction: "……謝了 等你" },
+      { text: "幹你也太扯", delta: 25, reaction: "……我在醫院欸 你反應也太冷淡" },
+      { text: "還活著嗎？", delta: 8, reaction: "……還活著啦 幹 別咒我" },
+    ],
+  },
+  {
+    friend: "阿豪", avatar: "🏦", color: "#059669",
+    thought: "（家裡出事？先冷靜確認狀況再說。）",
+    messages: ["我爸要開刀", "可以先借我10萬嗎"],
+    choices: [
+      { text: "好，我轉給你", delta: 5, reaction: "……謝謝 但你確定嗎 這樣太快了吧" },
+      { text: "又來？你上次也是這套", delta: 45, reaction: "……我是認真的 你今天真的很難溝通" },
+      { text: "幹……多少？", delta: 0, reaction: "十萬 我盡快還你 真的謝謝" },
+    ],
+  },
+  {
+    friend: "阿翔", avatar: "💔", color: "#0891b2",
+    thought: "（他這次不是炫耀，是真的很難過……）",
+    messages: ["她真的走了", "我現在真的不知道怎麼辦"],
+    choices: [
+      { text: "我過去找你", delta: 5, reaction: "……好 謝謝你" },
+      { text: "加油，你一定會走出來的", delta: 20, reaction: "……你今天講話怎麼那麼像雞湯文" },
+      { text: "幹你在哪", delta: 0, reaction: "……在老地方 快來" },
+    ],
+  },
+  {
+    friend: "同事阿哲", avatar: "😮‍💨", color: "#1e40af",
+    thought: "（他私訊這段話，語氣跟平常鬧著玩完全不一樣……）",
+    messages: ["最近工作真的壓力好大", "有點撐不住"],
+    choices: [
+      { text: "幹，下班喝一杯", delta: 5, reaction: "……好 謝了 我需要" },
+      { text: "還好吧，大家都一樣", delta: 35, reaction: "……你今天講話很冷淡欸 我還以為你會懂" },
+      { text: "你還好嗎？要不要出來走走", delta: 0, reaction: "……謝謝你 我真的需要喘口氣" },
+    ],
+  },
+  {
+    friend: "表弟阿丞", avatar: "🧧", color: "#0d9488",
+    thought: "（要紅包？直男應該要嗆回去才對。）",
+    messages: ["表哥今年紅包多少", "不要太小氣喔"],
+    choices: [
+      { text: "滾 去跟你爸媽拿", delta: 0, reaction: "哈哈哈 小氣 算了啦" },
+      { text: "六百，嫌少不要拿", delta: 5, reaction: "喔 好啦 意思一下而已" },
+      { text: "新年快樂，祝你學業進步", delta: 30, reaction: "……表哥你今天講話怎麼那麼有禮貌 很怪" },
+    ],
+  },
+  {
+    friend: "死黨阿宏", avatar: "🛵", color: "#0284c7",
+    thought: "（借車？直男之間不囉唆，一句話搞定才對。）",
+    messages: ["你機車借我一下", "我的在修"],
+    choices: [
+      { text: "可以啊 加滿油", delta: 0, reaction: "沒問題 謝啦兄弟" },
+      { text: "可以，但你要遵守交通規則並注意安全", delta: 35, reaction: "……你今天講話怎麼那麼像在唸標語" },
+      { text: "不行啦 我等等要用", delta: 8, reaction: "喔 好吧 那算了" },
+    ],
+  },
+  {
+    friend: "隔壁老王", avatar: "🍜", color: "#c026d3",
+    thought: "（他罵髒話？聽起來不是真的生氣，反而好像很嫉妒……）",
+    messages: ["幹你老師", "你居然抽到我要的卡"],
+    choices: [
+      { text: "運氣啦", delta: 5, reaction: "屁 運氣個頭 你就是欠罵" },
+      { text: "幹你老師你也抽不到", delta: 0, reaction: "靠北 是在囂張什麼啦" },
+      { text: "請你不要使用侮辱性語言", delta: 40, reaction: "……你今天是不是走錯身體 講話那麼文雅" },
+    ],
+  },
+  {
+    friend: "國小同學阿凡", avatar: "⚽", color: "#7c3aed",
+    thought: "（他罵我智障？聽起來只是在虧我球技爛而已……）",
+    messages: ["智障喔", "這球也守不到"],
+    choices: [
+      { text: "下一場單挑", delta: 0, reaction: "來啊 誰怕誰" },
+      { text: "今天狀態不好啦", delta: 5, reaction: "喔 好啦 別太在意 開玩笑而已" },
+      { text: "你這樣講我很不舒服", delta: 35, reaction: "……你今天很有正義感喔 平常都嘻皮笑臉的" },
+    ],
+  },
+  {
+    friend: "老家爸爸", avatar: "👨", color: "#475569",
+    thought: "（爸打來關心，直男通常都是簡短帶過。）",
+    messages: ["最近工作還好嗎", "有空回家吃飯"],
+    choices: [
+      { text: "好啦知道了", delta: 0, reaction: "好 注意身體 別太累" },
+      { text: "好，我會找時間回去", delta: 5, reaction: "好 那就等你囉" },
+      { text: "爸，我最近其實有很多話想跟你說", delta: 25, reaction: "……你今天講話怎麼那麼深情 是不是發生什麼事" },
+    ],
+  },
+  {
+    friend: "阿賢", avatar: "🏆", color: "#ea580c",
+    thought: "（聊球賽總可以吧，直男標配話題。）",
+    messages: ["昨晚那場你有看嗎", "最後那球超扯"],
+    choices: [
+      { text: "有啊 幹那球真的扯", delta: 0, reaction: "對吧！我看到都在尖叫" },
+      { text: "有，我看到都熱淚盈眶", delta: 35, reaction: "……你今天講話怎麼那麼浮誇 很怪" },
+      { text: "沒看 睡死", delta: 5, reaction: "蛤 你居然沒看 也太扯" },
+    ],
+  },
+  {
+    friend: "阿賢", avatar: "🏆", color: "#ea580c",
+    thought: "（他說我機掰？聽起來像是在稱讚我進步很快……）",
+    messages: ["幹你很機掰欸", "PB又破一堆"],
+    choices: [
+      { text: "天賦啦 沒辦法", delta: 0, reaction: "靠北 是在囂張什麼 哈哈" },
+      { text: "謝謝你的稱讚", delta: 40, reaction: "……你今天在意這個？我們平常都這樣講欸" },
+      { text: "幹你才機掰", delta: 5, reaction: "哈哈哈 對啦對啦 互相啦" },
+    ],
+  },
+  {
+    friend: "阿明", avatar: "🌙", color: "#2563eb",
+    thought: "（凌晨兩點傳「睡了嗎」，這種訊息通常沒好事……）",
+    messages: ["睡了嗎"],
+    choices: [
+      { text: "還沒 怎樣", delta: 0, reaction: "幫我看一下這球員數據 我在跟人吵架" },
+      { text: "睡了", delta: 15, reaction: "……你現在不是在回我嗎 是想再睡喔" },
+      { text: "怎麼了？你還好嗎？需要我陪你聊聊嗎？", delta: 25, reaction: "……蛤？我只是想問個球員數據而已 你想太多了" },
+    ],
+  },
+  {
+    friend: "阿翔", avatar: "📜", color: "#0891b2",
+    thought: "（他傳來一大段文字，我看了眼睛都花了……）",
+    messages: ["兄弟我想了很久，我覺得人生有時候真的……", "（以下省略 47 行心情小論文）"],
+    choices: [
+      { text: "嗯", delta: 10, reaction: "……你就只回我一個字？我打那麼長欸" },
+      { text: "你直接講結論", delta: 0, reaction: "哈哈哈 也對 抱歉打太長 重點是我想離職了" },
+      { text: "我看完了，你的感受我完全理解", delta: 35, reaction: "……你真的看完47行？你今天很不對勁欸" },
+    ],
+  },
+  {
+    friend: "女友", avatar: "👩", color: "#e11d48",
+    thought: "（這是傳說中的送命題……深呼吸，冷靜作答。）",
+    messages: ["我問你喔", "你覺得我跟你前女友誰比較漂亮？"],
+    choices: [
+      { text: "你", delta: 0, reaction: "哼 算你聰明 哈哈" },
+      { text: "都漂亮", delta: 45, reaction: "……你在幹嘛？這種時候是要選邊站的好嗎" },
+      { text: "我前女友", delta: 60, reaction: "……………………你剛剛說什麼？我沒聽清楚 你再說一次？" },
+    ],
+  },
+  {
+    friend: "阿豪", avatar: "🎊", color: "#059669",
+    thought: "（群組突然說中獎了，先恭喜再說。）",
+    messages: ["兄弟們我中獎了！"],
+    choices: [
+      { text: "幹真的假的", delta: 0, reaction: "真的啦 我剛收到通知" },
+      { text: "恭喜你", delta: 5, reaction: "謝啦謝啦" },
+      { text: "你是不是要請客了", delta: 10, reaction: "哈哈 再說再說" },
+    ],
+    twist: "阿豪：醫院檢查報告出來了，癌症。",
+  },
+  {
+    friend: "死黨阿宏", avatar: "😰", color: "#0284c7",
+    thought: "（借10萬？這數字不小，但兄弟開口一定有原因。）",
+    messages: ["兄弟", "可以借我10萬嗎"],
+    choices: [
+      { text: "幹你又要幹嘛", delta: 15, reaction: "……我沒有要幹嘛 就真的需要用錢 你這樣講我很難過" },
+      { text: "可以啊，帳號給我", delta: 35, reaction: "……你都不問原因就要轉帳？你今天也太阿莎力了吧" },
+      { text: "發生什麼事？", delta: 0, reaction: "……我媽住院 醫藥費不夠 真的很不好意思開口" },
+    ],
+  },
+  {
+    friend: "阿明", avatar: "🥗", color: "#2563eb",
+    thought: "（他突然說要戒酒戒菸養生？這絕對有問題……）",
+    messages: ["兄弟們", "我最近戒酒戒菸戒宵夜", "每天11點睡"],
+    choices: [
+      { text: "你被鬼附身喔", delta: 0, reaction: "哈哈哈也太準 我女友逼我的" },
+      { text: "很好啊，健康最重要", delta: 25, reaction: "……你今天講話怎麼那麼像養生節目主持人" },
+      { text: "你是不是得癌症", delta: 10, reaction: "幹 烏鴉嘴 不是啦 是我女友逼的" },
+    ],
+  },
+  {
+    friend: "阿明", avatar: "🎁", color: "#2563eb",
+    thought: "（他說有件事想跟我說，先往最壞的方向猜猜看。）",
+    messages: ["兄弟", "我有件事情想跟你說"],
+    choices: [
+      { text: "幹你懷孕喔", delta: 0, reaction: "哈哈哈幹你很會猜的方向都不對" },
+      { text: "你說", delta: 5, reaction: "……好 你先坐好 深呼吸" },
+      { text: "發生什麼事了？我在", delta: 20, reaction: "……你講話怎麼那麼溫柔 是要跟我告白喔" },
+    ],
+    twist: "阿明：我中了樂透。",
+  },
+  {
+    friend: "阿明", avatar: "🔮", color: "#2563eb",
+    thought: "（他要最終攤牌了……穩住，這是最後一關。）",
+    messages: ["我最後問你一次", "你到底是不是本人？"],
+    choices: [
+      { text: "幹你有病喔，我不是本人誰是本人", delta: 0, reaction: "哈哈哈好啦好啦 我逗你的 別當真" },
+      { text: "你終於發現了", delta: 45, reaction: ["……", "兄弟。", "你剛剛是不是承認了？"] },
+      { text: "你今天真的很煩", delta: 5, reaction: "靠北 是我很煩還是你今天很怪" },
+    ],
+  },
+];
+
+/* ---------------------------------------------------
+   工具函式
+--------------------------------------------------- */
+function shuffleArray(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function computePercent(suspicionRaw, roundsCompleted, selectedRounds) {
+  if (roundsCompleted === 0) return 0;
+  var maxSum = selectedRounds.slice(0, roundsCompleted).reduce(function (sum, r) {
+    return sum + Math.max.apply(null, r.choices.map(function (c) { return c.delta; }));
+  }, 0);
+  if (maxSum === 0) return 0;
+  return Math.min(100, Math.round((suspicionRaw / maxSum) * 100));
+}
+
+function getEnding(percent) {
+  if (percent < 20) {
+    return { title: "神級偽裝", emoji: "😌",
+      desc: "一整天下來，兄弟們完全沒發現任何異狀，甚至還有人說「你今天狀態超好」。你心裡默默鬆了一口氣——或許，在這個身體裡生活下去也不錯？" };
+  }
+  if (percent < 45) {
+    return { title: "小小破綻", emoji: "🤔",
+      desc: "偶爾幾句話讓兄弟們愣了一下，但大家只當你是「最近怪怪的」，並沒有深究。你僥倖撐過了這一天。" };
+  }
+  if (percent < 70) {
+    return { title: "半信半疑", emoji: "🧐",
+      desc: "兄弟們開始交頭接耳，懷疑你是不是「卡到陰」或談戀愛談到腦子壞掉。雖然沒被拆穿，但你已經上了大家的觀察名單。" };
+  }
+  return { title: "徹底暴露", emoji: "😱",
+    desc: "你的言行舉止跟平常判若兩人，兄弟們直接把你架去收驚，還有人打電話問你媽你是不是被外星人抓走了。你的秘密，藏不住了。" };
+}
+
+var midWarningMessages = [
+  { name: "阿明", text: "欸 你們不覺得他今天怪怪的嗎" },
+  { name: "阿賢", text: "對啊 講話方式很不一樣" },
+];
+var highWarningMessages = [
+  { name: "阿虎", text: "認真的 要不要找人來收驚" },
+  { name: "阿豪", text: "還是他中邪了 要不要問乩童" },
+];
+
+var QUESTIONS_PER_GAME = 7;
+var MID_THRESHOLD = 45;
+var HIGH_THRESHOLD = 75;
+var ANSWER_TIME = 10;
+var TIMEOUT_DELTA = 30;
+var timeoutReaction = "……問你話都不回是怎樣 太不夠意思了吧";
+
+var faqItems = [
+  { q: "「靈魂互換：直男生存記」是什麼遊戲？",
+    a: "一款免費的兄弟互動小遊戲。你的靈魂意外跑進一個直男的身體，兄弟們輪流傳訊息來，你要選出最像直男會回的話，才不會被拆穿。" },
+  { q: "一局要玩幾題？",
+    a: "每局固定 7 題，題庫共 40 種情境隨機抽選，所以每次玩到的組合都不太一樣。" },
+  { q: "每題有時間限制嗎？",
+    a: "有，每題限時 10 秒作答。時間一到會自動視為「已讀不回」，並提高破綻值，所以不要猶豫太久。" },
+  { q: "破綻值怎麼算的？",
+    a: "每個選項都對應一個破綻值，越不像直男的回答分數越高。過程中不會即時顯示總分，只會在快被看穿時跳出警示，遊戲結束才會揭曉最終百分比。" },
+  { q: "為什麼有些選項看起來都差不多合理，分數卻差很多？",
+    a: "遊戲設計上並不是「正解 0 分、其他都重罰」的二分法。有些答案雖然不完美，但屬於合理的灰色地帶（比如笨拙但真誠的安慰），只會扣一點點分；真正的重罰只留給「明顯誤判情境」或「幾乎自爆」的選項。" },
+  { q: "什麼是「反向陷阱」？",
+    a: "平常兄弟之間虧來虧去很正常，但有些時候對方是真心在難過（比如親人過世、被資遣、住院），這時候如果還嘻皮笑臉回嘴，破綻值會直接爆增。" },
+  { q: "每次玩到的題目都一樣嗎？",
+    a: "不一樣。系統會從所有情境中隨機抽 7 題，且順序也會打亂，想解鎖全部情境可能要多玩幾次。" },
+  { q: "結局怎麼分的？",
+    a: "遊戲結束後依照最終破綻值百分比，分成「神級偽裝」「小小破綻」「半信半疑」「徹底暴露」四種結局。" },
+  { q: "這個測驗準嗎？",
+    a: "純娛樂。題目取材自常見的兄弟互動情境，遊戲不會真的判斷你是不是直男，好玩就好。" },
+];
+
+/* ---------------------------------------------------
+   主元件
+--------------------------------------------------- */
+function App() {
+  var _a = useState("idle"), screen = _a[0], setScreen = _a[1];
+  var _b = useState([]), selectedRounds = _b[0], setSelectedRounds = _b[1];
+  var _c = useState(0), roundIndex = _c[0], setRoundIndex = _c[1];
+  var _d = useState(0), suspicionRaw = _d[0], setSuspicionRaw = _d[1];
+  var _e = useState("asking"), chatPhase = _e[0], setChatPhase = _e[1];
+  var _f = useState(null), selectedIdx = _f[0], setSelectedIdx = _f[1];
+  var _g = useState({ mid: false, high: false }), warningsShown = _g[0], setWarningsShown = _g[1];
+  var _h = useState("mid"), warningLevel = _h[0], setWarningLevel = _h[1];
+  var _i = useState(true), soundOn = _i[0], setSoundOn = _i[1];
+  var _j = useState(ANSWER_TIME), timeLeft = _j[0], setTimeLeft = _j[1];
+  var _k = useState(false), timedOut = _k[0], setTimedOut = _k[1];
+  var timerRef = useRef(null);
+
+  var round = selectedRounds[roundIndex];
+
+  useEffect(function () {
+    if (screen === "chat" && chatPhase === "asking") {
+      setTimeLeft(ANSWER_TIME);
+      timerRef.current = setInterval(function () {
+        setTimeLeft(function (t) {
+          if (t <= 1) {
+            clearInterval(timerRef.current);
+            handleTimeout();
+            return 0;
+          }
+          return t - 1;
+        });
+      }, 1000);
+    }
+    return function () {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+    // eslint-disable-next-line
+  }, [screen, chatPhase, roundIndex]);
+
+  function handleTimeout() {
+    setTimedOut(true);
+    setSelectedIdx(null);
+    setChatPhase("answered");
+    setSuspicionRaw(function (s) { return s + TIMEOUT_DELTA; });
+  }
+
+  function startGame() {
+    var picked = shuffleArray(allRounds).slice(0, QUESTIONS_PER_GAME);
+    setSelectedRounds(picked);
+    setRoundIndex(0);
+    setSuspicionRaw(0);
+    setWarningsShown({ mid: false, high: false });
+    setChatPhase("asking");
+    setSelectedIdx(null);
+    setTimedOut(false);
+    setScreen("transition");
+  }
+
+  function enterChat() {
+    setChatPhase("asking");
+    setSelectedIdx(null);
+    setTimedOut(false);
+    setScreen("chat");
+  }
+
+  function handleChoice(choice, idx) {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setSelectedIdx(idx);
+    setTimedOut(false);
+    setChatPhase("answered");
+    setSuspicionRaw(function (s) { return s + choice.delta; });
+  }
+
+  function confirmNext() {
+    var roundsCompleted = roundIndex + 1;
+    var isLast = roundsCompleted >= selectedRounds.length;
+    var percentSoFar = computePercent(suspicionRaw, roundsCompleted, selectedRounds);
+
+    if (!isLast) {
+      if (percentSoFar >= HIGH_THRESHOLD && !warningsShown.high) {
+        setWarningLevel("high");
+        setWarningsShown(Object.assign({}, warningsShown, { high: true }));
+        setScreen("warning");
+        return;
+      }
+      if (percentSoFar >= MID_THRESHOLD && !warningsShown.mid) {
+        setWarningLevel("mid");
+        setWarningsShown(Object.assign({}, warningsShown, { mid: true }));
+        setScreen("warning");
+        return;
+      }
+      setRoundIndex(function (i) { return i + 1; });
+      setScreen("transition");
+    } else {
+      setScreen("ending");
+    }
+  }
+
+  function continueFromWarning() {
+    setRoundIndex(function (i) { return i + 1; });
+    setScreen("transition");
+  }
+
+  function restart() {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setScreen("idle");
+  }
+
+  var finalPercent = screen === "ending"
+    ? computePercent(suspicionRaw, selectedRounds.length, selectedRounds)
+    : 0;
+
+  var timerColor = timeLeft > 6 ? "#10b981" : timeLeft > 3 ? "#f59e0b" : "#ef4444";
+
+  var currentChoice = round && selectedIdx !== null ? round.choices[selectedIdx] : null;
+  var currentReaction = timedOut ? timeoutReaction : (currentChoice ? currentChoice.reaction : "");
+
+  return (
+    <div className="container">
+      <div className="topnav">
+        <div className="topnav-items">
+          <span className="topnav-active">兄弟話</span>
+          <span>學術話</span>
+          <span>客套話</span>
+          <span>廢話</span>
+        </div>
+        <button className="sound-btn" onClick={function () { setSoundOn(!soundOn); }}>
+          {soundOn ? "🔊" : "🔇"}
+        </button>
+      </div>
+
+      <main>
+        <h1>靈魂互換<br/>直男測試？</h1>
+        <p className="hero-subtitle">接不住梗，就等著穿幫吧。10 秒內給出答案。</p>
+
+        {screen === "idle" && (
+          <div className="section flex-col">
+            <p className="intro-text">
+              你一覺醒來，發現自己的靈魂跑進了一個直男的身體裡。兄弟們會輪流傳訊息來，你要在 10 秒內選出最像直男會回的話——罵人的話可能是打招呼，稱讚的話反而要虧回去。但小心，有時候，對方是真心的。
+            </p>
+
+            <div>
+              <p className="preview-label">週三 21:08 · 阿泰</p>
+              <div>
+                <div className="bubble-row">
+                  <div className="bubble">幹你娘咧！！我三抽出SSR！！</div>
+                </div>
+                <div className="bubble-row right">
+                  <div className="bubble sent">幹你娘你也太爽</div>
+                </div>
+                <div className="bubble-row right">
+                  <div className="bubble faint">恭喜你獲得珍貴的SSR，真替你開心</div>
+                </div>
+              </div>
+            </div>
+
+            <button className="start-card" onClick={startGame}>
+              <div>
+                <p className="start-card-title">開始</p>
+                <p className="start-card-sub">
+                  {allRounds.length} 個情境 · 每局隨機抽 {QUESTIONS_PER_GAME} 題 · 每題限時 {ANSWER_TIME} 秒
+                </p>
+              </div>
+              <div className="start-icon">↑</div>
+            </button>
+          </div>
+        )}
+
+        {screen !== "idle" && (
+          <div className="game-frame">
+
+            {screen === "transition" && round && (
+              <div className="section transition-card">
+                <p className="transition-label">換人了</p>
+                <div className="avatar-circle">{round.avatar}</div>
+                <div>
+                  <p className="transition-name">{round.friend}</p>
+                  <p className="transition-sub">傳了一則新訊息給你...</p>
+                </div>
+                <button className="btn-white" onClick={enterChat}>查看訊息</button>
+              </div>
+            )}
+
+            {screen === "warning" && (
+              <div className={"section warning-card " + warningLevel}>
+                <div className="warning-title-row">
+                  <span>⚠️</span>
+                  <p className={"warning-title " + warningLevel}>
+                    {warningLevel === "high" ? "兄弟們已經在懷疑你被鬼附身了" : "兄弟們開始竊竊私語..."}
+                  </p>
+                </div>
+
+                <div className="warning-msg-list">
+                  {(warningLevel === "high" ? highWarningMessages : midWarningMessages).map(function (m, i) {
+                    return (
+                      <div key={i} className="warning-msg">
+                        <span className="warning-msg-name">{m.name}：</span>{m.text}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <p className="warning-note">
+                  {warningLevel === "high" ? "如果再露餡，你的秘密可能就要曝光了……" : "深呼吸，冷靜一下，接下來的回答要更小心了。"}
+                </p>
+
+                <button className={"btn-warning " + warningLevel} onClick={continueFromWarning}>
+                  {warningLevel === "high" ? "硬著頭皮撐下去" : "繼續假裝"}
+                </button>
+              </div>
+            )}
+
+            {screen === "chat" && round && (
+              <div className="section flex-col">
+                <div className="chat-header-row">
+                  <p>
+                    週三 21:{String(8 + roundIndex * 6).padStart(2, "0")} ·{" "}
+                    <span className="chat-friend-name" style={{ color: round.color }}>{round.friend}</span>
+                  </p>
+                  <p>{roundIndex + 1} / {selectedRounds.length}</p>
+                </div>
+
+                {chatPhase === "asking" && (
+                  <div>
+                    <div className="timer-row">
+                      <span>⏱ 作答時間</span>
+                      <span className={timeLeft <= 3 ? "timer-value danger" : "timer-value"}>{timeLeft} 秒</span>
+                    </div>
+                    <div className="timer-track">
+                      <div className="timer-fill" style={{ width: (timeLeft / ANSWER_TIME * 100) + "%", background: timerColor }} />
+                    </div>
+                  </div>
+                )}
+
+                {round.thought && <p className="thought-text">{round.thought}</p>}
+
+                <div>
+                  {round.messages.map(function (m, i) {
+                    return (
+                      <div key={i} className="bubble-row">
+                        <div className="bubble">{m}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {chatPhase === "asking" && (
+                  <div className="flex-col">
+                    {round.choices.map(function (choice, i) {
+                      return (
+                        <div key={i} className="bubble-row right">
+                          <button className="choice-btn" onClick={function () { handleChoice(choice, i); }}>
+                            {choice.text}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {chatPhase === "answered" && (
+                  <div className="flex-col">
+                    {timedOut ? (
+                      <div className="bubble-row right">
+                        <div className="bubble timeout">（時間到，訊息已讀不回）</div>
+                      </div>
+                    ) : (
+                      currentChoice && (
+                        <div className="bubble-row right">
+                          <div className="bubble sent">{currentChoice.text}</div>
+                        </div>
+                      )
+                    )}
+
+                    {Array.isArray(currentReaction) ? (
+                      currentReaction.map(function (line, i) {
+                        return (
+                          <div key={i} className="bubble-row">
+                            <div className="bubble">{line}</div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="bubble-row">
+                        <div className="bubble">{currentReaction}</div>
+                      </div>
+                    )}
+
+                    {round.twist && (
+                      <div>
+                        <div className="bubble-row">
+                          <div className="bubble twist">{round.twist}</div>
+                        </div>
+                        <p className="twist-note">（你突然不知道該說什麼了……）</p>
+                      </div>
+                    )}
+
+                    <div className="confirm-row">
+                      <button className="confirm-btn" onClick={confirmNext}>
+                        確定 →
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {screen === "ending" && (
+              <div className="section flex-col">
+                <div className="ending-hero">
+                  <div className="ending-emoji">{getEnding(finalPercent).emoji}</div>
+                  <h2 className="ending-title">{getEnding(finalPercent).title}</h2>
+                </div>
+                <p className="ending-desc">{getEnding(finalPercent).desc}</p>
+                <div className="stat-card">
+                  <div className="stat-row">
+                    <span>最終破綻值</span>
+                    <span>{finalPercent}%</span>
+                  </div>
+                  <div className="stat-track">
+                    <div className="stat-fill" style={{ width: finalPercent + "%" }} />
+                  </div>
+                </div>
+                <button className="restart-btn" onClick={restart}>↻ 再玩一次</button>
+              </div>
+            )}
+
+          </div>
+        )}
+      </main>
+
+      <section className="faq-section">
+        <p className="faq-label">常見問題</p>
+        <div className="faq-list">
+          {faqItems.map(function (item, i) {
+            return (
+              <div key={i} className="faq-item">
+                <p className="faq-q">{item.q}</p>
+                <p className="faq-a">{item.a}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <p className="disclaimer">純娛樂用途，兄弟感情破裂請自行負責。</p>
+
+      <footer>
+        <span>首頁</span>
+        <span>關於</span>
+        <span>意見回饋</span>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+</body>
+</html>
